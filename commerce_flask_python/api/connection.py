@@ -1,5 +1,6 @@
 from pymongo import MongoClient    
+from common.utils import safe_get_env_var
 
-mongouri = 'mongodb+srv://danielyaghoobian:PghRPWK8ob2qqTz8@cluster0.ms8sspi.mongodb.net'
-
-db = MongoClient(mongouri)["commerce"]
+mongouri = safe_get_env_var("MONGOURI")
+mongodb = safe_get_env_var("DATABASENAME")
+db = MongoClient(mongouri)[mongodb]
