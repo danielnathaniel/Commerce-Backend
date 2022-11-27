@@ -20,8 +20,8 @@ def products():
 
 
 @bp.route("/<productid>", methods=["GET"])
-def singleproduct(productId):
+def singleproduct(productid):
     results = db.products.find_one({
-        "_id": ObjectId(productId),
+        "_id": ObjectId(productid),
     })
     return json.dumps(mongo_formatter(results))

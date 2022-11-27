@@ -6,16 +6,11 @@ import json
 from api.security.guards import authorization_guard, get_bearer_token_from_request
 from api.connection import db
 from api.utils import mongo_formatter, json_abort
-from auth0.v3.authentication import Users
-from common.utils import safe_get_env_var
 from bson.objectid import ObjectId
 from http import HTTPStatus
 # https://www.geeksforgeeks.org/python-mongodb-find_one_and_update-query/
 from pymongo import ReturnDocument
-
-
-auth0_domain = safe_get_env_var("AUTH0_DOMAIN")
-
+from api.security.user import user_from_token
 
 bp_name = 'api-cart'
 bp_url_prefix = '/api/cart'
@@ -31,11 +26,8 @@ bp = Blueprint(bp_name, __name__, url_prefix=bp_url_prefix)
 @bp.route("/", methods=["GET"])
 @authorization_guard
 def cart_get():
-    token = get_bearer_token_from_request()
-    users = Users(auth0_domain)
-    myuser = users.userinfo(token)
     # myuser is a dictionary
-    results = db.carts.find({"user": myuser["email"]})
+    results = db.carts.find({"user": get_email()})
     return json.dumps(merge_cart_with_product_data(results))
     # return str(list(db.carts.find({"user": userid})))
     # return  list(db.carts.find({"user": userid}))
@@ -99,8 +91,7 @@ def merge_cart_with_product_data(data):
 
 def get_email():
     token = get_bearer_token_from_request()
-    users = Users(auth0_domain)
-    myuser = users.userinfo(token)
+    myuser = user_from_token(token)
     return myuser["email"]
 
 @bp.route("/product/<productid>", methods=["GET"])
