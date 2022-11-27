@@ -10,4 +10,4 @@ app = create_app()
 if __name__ == "__main__":
     # print(os.getenv("AUTH0_DOMAIN"))
     # https://stackoverflow.com/questions/41940663/how-can-i-change-the-host-and-port-that-the-flask-command-uses
-    app.run(debug =True, port=6060)
+    app.run(debug =True, port=6060, host='0.0.0.0')
