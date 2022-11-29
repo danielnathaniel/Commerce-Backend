@@ -6,16 +6,18 @@ import json
 from api.security.guards import authorization_guard, get_bearer_token_from_request
 from api.connection import db
 from api.utils import mongo_formatter, json_abort
+# https://pymongo.readthedocs.io/en/stable/api/bson/objectid.html
 from bson.objectid import ObjectId
 from http import HTTPStatus
 # https://www.geeksforgeeks.org/python-mongodb-find_one_and_update-query/
+# https://stackoverflow.com/questions/38967706/pymongo-global-name-returndocument-is-not-defined
 from pymongo import ReturnDocument
 from api.security.user import user_from_token
-
+# https://auth0.com/docs/quickstart/spa/react/01-login#install-the-auth0-react-sdk
 bp_name = 'api-cart'
 bp_url_prefix = '/api/cart'
 bp = Blueprint(bp_name, __name__, url_prefix=bp_url_prefix)
-
+# https://py.processing.org/reference/indexbrackets.html#:~:text=Index%20brackets%20(%5B%5D)%20have%20many,single%20character%20in%20a%20string.
 
 # @bp.route("/")
 # @authorization_guard
@@ -27,11 +29,12 @@ bp = Blueprint(bp_name, __name__, url_prefix=bp_url_prefix)
 @authorization_guard
 def cart_get():
     # myuser is a dictionary
+    #json.dumps converts objects into json string
     results = db.carts.find({"user": get_email()})
     return json.dumps(merge_cart_with_product_data(results))
     # return str(list(db.carts.find({"user": userid})))
     # return  list(db.carts.find({"user": userid}))
-# we dont need the userid on line 18 because the userid is the accesstoken from auth0
+# we dont need the userid because the userid is the accesstoken from auth0
 
 
 # # current response
@@ -43,7 +46,7 @@ def cart_get():
 #         "quantity" : 1
 #     }
 # ]
-
+#rubber duck method alternative - speak to audience
 # # what we want
 # [
 #     {
@@ -67,7 +70,7 @@ def merge_cart_with_product_data(data):
     # loop through current docs and populate product_ids and quantity_map
     for doc in data:
         product_ids.append(doc["product_id"])
-        # had to add str to make the object id into a string to get the key
+    # had to add str to make the object id into a string to get the key
         quantity_map[str(doc["product_id"])] = doc["quantity"]
 
     # query that will query the products collection for a list of products
@@ -82,6 +85,7 @@ def merge_cart_with_product_data(data):
     for doc in products:
         filtered_doc = mongo_formatter(doc)
         # print('doc',doc)
+        # get returns the value
         filtered_doc["quantity"] = quantity_map.get(doc["_id"])
         results.append(filtered_doc)
     return results
@@ -120,7 +124,19 @@ def product_insert(productid):
             "error_description": "need quantity passed",
             "message": "Requires quantity"
         }
+#json abort from auth0 docs
         json_abort(HTTPStatus.BAD_REQUEST, invalid_request_error)
+
+
+    # print(content)
+    # else:
+    #     if quantity > 0:
+    #         invalid_request_error = {
+    #             "error": "invalid_request",
+    #             "error_description": "need quantity passed",
+    #             "message": "Requires quantity"
+    #         }
+    #         json_abort(HTTPStatus.BAD_REQUEST, invalid_request_error)
 
     document = {
         "user": get_email(),
@@ -142,7 +158,7 @@ def product_update(productid):
             "message": "Requires quantity"
         }
         json_abort(HTTPStatus.BAD_REQUEST, invalid_request_error)
-
+    
     document = {
         "user": get_email(),
         "product_id": ObjectId(productid),
@@ -157,7 +173,7 @@ def product_update(productid):
             "message": "no matching document"
         }
         json_abort(HTTPStatus.NOT_FOUND, not_found_error)
-
+    # https://www.geeksforgeeks.org/python-mongodb-find_one_and_update-query/
     new_document = db.carts.find_one_and_update({
         '_id': found_document['_id']
     }, { "$set": { 'quantity': quantity } }, return_document = ReturnDocument.AFTER)

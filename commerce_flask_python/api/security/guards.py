@@ -5,6 +5,7 @@ from flask import request, g
 
 from api.security.auth0_service import auth0_service
 from api.utils import json_abort
+# from auth0 docs
 
 unauthorized_error = {
     "message": "Requires authentication"
@@ -16,7 +17,7 @@ invalid_request_error = {
     "message": "Requires authentication"
 }
 
-
+# from auth0 docs
 def get_bearer_token_from_request():
     authorization_header = request.headers.get("Authorization", None)
     if not authorization_header:

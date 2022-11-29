@@ -3,7 +3,7 @@ from common.utils import safe_get_env_var
 auth0_domain = safe_get_env_var("AUTH0_DOMAIN")
 
 TOKEN_CACHE={}
-
+# getting the user to pass around 
 def user_from_token(token):
     cached_user = TOKEN_CACHE.get(token)
     if cached_user:

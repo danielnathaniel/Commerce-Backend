@@ -5,6 +5,7 @@ from bson.objectid import ObjectId
 from flask import (
     Blueprint
 )
+# https://auth0.com/docs/quickstart/spa/react/01-login#install-the-auth0-react-sdk
 # use app.run! ! https://stackoverflow.com/questions/73183394/view-function-did-not-return-a-valid-response-the-return-type-must-be-a-string
 bp_name = 'api-products'
 bp_url_prefix = '/api/products'
