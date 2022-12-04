@@ -11,7 +11,7 @@ bp_name = 'api-products'
 bp_url_prefix = '/api/products'
 bp = Blueprint(bp_name, __name__, url_prefix=bp_url_prefix)
 
-
+# show products
 @bp.route("", methods=["GET"])
 def products():
     results = db.products.find()
@@ -19,7 +19,7 @@ def products():
     # leaving find blank returns everything from the collections
     # find returns an iterator causing problems - list puts it into an array 
 
-
+# show single product
 @bp.route("/<productid>", methods=["GET"])
 def singleproduct(productid):
     results = db.products.find_one({

@@ -98,20 +98,21 @@ def get_email():
     myuser = user_from_token(token)
     return myuser["email"]
 
+# Get product
 @bp.route("/product/<productid>", methods=["GET"])
 @authorization_guard
 def product_get(productid):
     results = db.carts.find_one({"user": get_email(), "product_id": ObjectId(productid)})
     return json.dumps(mongo_formatter(results))
 
-
+# Delete product 
 @bp.route("/product/<productid>", methods=["DELETE"])
 @authorization_guard
 def product_delete(productid):
     results = db.carts.find_one_and_delete({"user": get_email(), "product_id": ObjectId(productid)})
     return json.dumps(mongo_formatter(results))
 
-
+# post product
 # https://stackoverflow.com/questions/20001229/how-to-get-posted-json-in-flask'
 @bp.route("/product/<productid>", methods=["POST"])
 @authorization_guard
@@ -145,7 +146,7 @@ def product_insert(productid):
     }
     db.carts.insert_one(document)
     return json.dumps(mongo_formatter(document))
-
+#update quantity
 @bp.route("/product/<productid>", methods=["PATCH"])
 @authorization_guard
 def product_update(productid):
