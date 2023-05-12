@@ -26,7 +26,7 @@ jobs:
       - name: Build & Push image
         uses: docker/build-push-action@v3
         with:
-          context: ./danielcommerce
+          context: ./commerce_flask_python
           platforms: linux/amd64,linux/arm64
           push: true
           tags: danielyaghoobian/commercebackend:latest
